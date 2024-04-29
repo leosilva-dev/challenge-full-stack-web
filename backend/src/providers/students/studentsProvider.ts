@@ -49,9 +49,19 @@ const updateById = async (id: string, updateData: IStudent): Promise<IStudent | 
   }
 };
 
+const deleteById = async (id: string): Promise<boolean | Error> => {
+  try {
+    const result = await Knex(ETableNames.students).where({ id }).del();
+    return result === 1 ? true : false;
+  } catch (error) {
+    return new Error('Erro ao excluir aluno.');
+  }
+};
+
 export const studentsProvider = {
   getAll,
   create,
   getById,
   updateById,
+  deleteById,
 };

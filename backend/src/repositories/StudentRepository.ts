@@ -17,4 +17,8 @@ export class StudentRepository implements IStudentRepository {
   async updateById(id: string, updateData: IStudent): Promise<IStudent | Error> {
     return studentsProvider.updateById(id, updateData);
   }
+
+  async deleteById(id: string): Promise<boolean | Error> {
+    return studentsProvider.deleteById(id);
+  }
 }
