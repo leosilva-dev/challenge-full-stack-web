@@ -13,4 +13,8 @@ export class StudentRepository implements IStudentRepository {
   async create(studentData: Omit<IStudent, 'id'>): Promise<string | Error> {
     return studentsProvider.create(studentData);
   }
+
+  async updateById(id: string, updateData: IStudent): Promise<IStudent | Error> {
+    return studentsProvider.updateById(id, updateData);
+  }
 }

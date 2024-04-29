@@ -33,8 +33,25 @@ const create = async (studentData: Omit<IStudent, 'id'>): Promise<string | Error
   }
 };
 
+const updateById = async (id: string, updateData: IStudent): Promise<IStudent | Error> => {
+  try {
+    const result = await Knex(ETableNames.students)
+      .where({ id })
+      .update(updateData)
+      .returning(['id', 'name', 'email', 'cpf', 'ra']);
+
+    if (result[0] === undefined) {
+      return new Error('Erro ao editar aluno.');
+    }
+    return result[0];
+  } catch (error) {
+    return new Error('Erro ao editar aluno.');
+  }
+};
+
 export const studentsProvider = {
   getAll,
   create,
   getById,
+  updateById,
 };
