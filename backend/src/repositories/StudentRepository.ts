@@ -3,6 +3,9 @@ import { IStudentRepository } from './IStudentRepository';
 import { IStudent } from 'src/database/models';
 
 export class StudentRepository implements IStudentRepository {
+  async getById(id: string): Promise<IStudent | undefined | Error> {
+    return studentsProvider.getById(id);
+  }
   async getAll(): Promise<IStudent[] | Error> {
     return studentsProvider.getAll();
   }

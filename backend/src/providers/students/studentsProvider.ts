@@ -2,6 +2,15 @@ import { Knex } from 'src/database/knex/connection';
 import { ETableNames } from 'src/database/ETableNames';
 import { IStudent } from 'src/database/models';
 
+const getById = async (id: string): Promise<IStudent | undefined | Error> => {
+  try {
+    const result = await Knex(ETableNames.students).where({ id }).first();
+    return result;
+  } catch (error) {
+    return new Error('Erro ao buscar aluno.');
+  }
+};
+
 const getAll = async (): Promise<IStudent[] | Error> => {
   try {
     return Knex(ETableNames.students).select('id', 'name', 'email', 'cpf', 'ra');
@@ -27,4 +36,5 @@ const create = async (studentData: Omit<IStudent, 'id'>): Promise<string | Error
 export const studentsProvider = {
   getAll,
   create,
+  getById,
 };
