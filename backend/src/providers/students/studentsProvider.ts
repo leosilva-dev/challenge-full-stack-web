@@ -2,6 +2,14 @@ import { Knex } from 'src/database/knex/connection';
 import { ETableNames } from 'src/database/ETableNames';
 import { IStudent } from 'src/database/models';
 
+const getAll = async (): Promise<IStudent[] | Error> => {
+  try {
+    return Knex(ETableNames.students).select('id', 'name', 'email', 'cpf', 'ra');
+  } catch (error) {
+    return new Error('Erro ao buscar alunos.');
+  }
+};
+
 const create = async (studentData: Omit<IStudent, 'id'>): Promise<string | Error> => {
   try {
     const [result] = await Knex(ETableNames.students).insert(studentData).returning('id');
@@ -17,5 +25,6 @@ const create = async (studentData: Omit<IStudent, 'id'>): Promise<string | Error
 };
 
 export const studentsProvider = {
+  getAll,
   create,
 };
