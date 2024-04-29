@@ -1,11 +1,10 @@
 import 'dotenv/config';
 import fastify from 'fastify';
+import { routes } from './routes/routes';
 
-const app = fastify();
+export const app = fastify();
 
-app.get('/', (request, reply) => {
-  return reply.status(200).send({ message: 'hello world' });
-});
+app.register(routes);
 
 const startServer = async () => {
   try {
