@@ -29,6 +29,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@fastify/cors": "^9.0.1",
     "dotenv": "^16.4.5",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
