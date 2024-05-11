@@ -10,11 +10,17 @@ const items = [
     title: 'Página Inicial',
     icon: 'mdi-home',
     route: '/'
+  },
+  {
+    title: 'Alunos',
+    icon: 'mdi-home',
+    route: '/alunos'
   }
 ]
 
 const navigateTo = (route: string) => {
   router.push(route)
+  toggleDrawerOpen.value = false
 }
 </script>
 <template>
@@ -32,14 +38,14 @@ const navigateTo = (route: string) => {
       <v-navigation-drawer v-model="toggleDrawerOpen">
         <v-list>
           <v-list-item v-for="(item, index) in items" :key="index" @click="navigateTo(item.route)">
-            <v-list-item-content>
+            <v-list-item>
               <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
+            </v-list-item>
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
 
-      <v-main style="height: 95vh">
+      <v-main style="height: 100vh">
         <RouterView />
       </v-main>
     </v-layout>
