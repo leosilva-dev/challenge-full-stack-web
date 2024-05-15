@@ -41,22 +41,30 @@ const deleteById = async (id: number): Promise<string | undefined> => {
   }
 }
 
-const create = async (newStudent: IStudent): Promise<string | undefined> => {
+const create = async (newStudent: IStudent): Promise<string | Error> => {
   try {
     const { data } = await Api.post('/alunos', newStudent)
     return data
-  } catch (error) {
-    return undefined
+  } catch (error: any) {
+    if (error.response && error.response.data.error) {
+      return new Error(error.response.data.error)
+    } else {
+      return new Error('Erro ao processar a requisição.')
+    }
   }
 }
 
-const update = async (newStudent: IStudent): Promise<string | undefined> => {
+const update = async (newStudent: IStudent): Promise<string | Error> => {
   try {
     const { id, name, email } = newStudent
     const { data } = await Api.put(`/alunos/${id}`, { name, email })
     return data
-  } catch (error) {
-    return undefined
+  } catch (error: any) {
+    if (error.response && error.response.data.error) {
+      return new Error(error.response.data.error)
+    } else {
+      return new Error('Erro ao processar a requisição.')
+    }
   }
 }
 

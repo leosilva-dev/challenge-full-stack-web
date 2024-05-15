@@ -51,28 +51,26 @@ const displayAlert = (message: string, success: 'success' | 'error') => {
   showAlert.value = true
 }
 
-const handleSave = () => {
+const handleSave = async () => {
   if (!allFieldsFilled.value) {
     displayAlert('Por favor, preencha todos os campos obrigatórios.', 'error')
     return
   }
 
   if (isEditing.value) {
-    StudentsService.update(student).then((response) => {
-      if (response) {
-        displayAlert('Usuário editado com sucesso.', 'success')
-      } else {
-        displayAlert('Erro ao editar usuário.', 'error')
-      }
-    })
+    const response = await StudentsService.update(student)
+    if (response instanceof Error) {
+      displayAlert(response.message, 'error')
+    } else {
+      displayAlert('Usuário editado com sucesso.', 'success')
+    }
   } else {
-    StudentsService.create(student).then((response) => {
-      if (response) {
-        displayAlert('Usuário cadastrado com sucesso.', 'success')
-      } else {
-        displayAlert('Erro ao cadastrar usuário.', 'error')
-      }
-    })
+    const response = await StudentsService.create(student)
+    if (response instanceof Error) {
+      displayAlert(response.message, 'error')
+    } else {
+      displayAlert('Usuário cadastrado com sucesso.', 'success')
+    }
   }
 }
 </script>
