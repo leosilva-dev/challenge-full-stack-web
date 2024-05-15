@@ -6,8 +6,8 @@ export class StudentRepository implements IStudentRepository {
   async getById(id: string): Promise<IStudent | undefined | Error> {
     return studentsProvider.getById(id);
   }
-  async getAll(): Promise<IStudent[] | Error> {
-    return studentsProvider.getAll();
+  async getAll(offset: number, limit: number, search: string): Promise<IStudent[] | Error> {
+    return studentsProvider.getAll(offset, limit, search);
   }
 
   async create(studentData: Omit<IStudent, 'id'>): Promise<string | Error> {

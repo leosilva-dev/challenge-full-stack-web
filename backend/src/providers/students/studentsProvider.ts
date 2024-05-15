@@ -11,9 +11,23 @@ const getById = async (id: string): Promise<IStudent | undefined | Error> => {
   }
 };
 
-const getAll = async (): Promise<IStudent[] | Error> => {
+const getAll = async (offset: number, limit: number, search: string): Promise<IStudent[] | Error> => {
   try {
-    return Knex(ETableNames.students).select('id', 'name', 'email', 'cpf', 'ra');
+    let query = Knex(ETableNames.students)
+      .select('id', 'name', 'email', 'cpf', 'ra')
+      .offset(offset)
+      .limit(limit);
+
+    if (search.trim() !== '') {
+      query = query.where(function () {
+        this.where('name', 'like', `%${search}%`)
+          .orWhere('email', 'like', `%${search}%`)
+          .orWhere('cpf', 'like', `%${search}%`)
+          .orWhere('ra', 'like', `%${search}%`);
+      });
+    }
+
+    return await query;
   } catch (error) {
     return new Error('Erro ao buscar alunos.');
   }
@@ -22,7 +36,6 @@ const getAll = async (): Promise<IStudent[] | Error> => {
 const create = async (studentData: Omit<IStudent, 'id'>): Promise<string | Error> => {
   try {
     const [result] = await Knex(ETableNames.students).insert(studentData).returning('id');
-
     if (typeof result === 'object') {
       return result.id;
     }
