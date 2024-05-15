@@ -41,7 +41,16 @@ const create = async (studentData: Omit<IStudent, 'id'>): Promise<string | Error
     }
 
     return new Error('Erro ao cadastrar aluno.');
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === '23505') {
+      if (error.constraint === 'students_cpf_unique') {
+        return new Error('O CPF informado já está cadastrado para outro aluno.');
+      } else if (error.constraint === 'students_email_unique') {
+        return new Error('O e-mail informado já está cadastrado para outro aluno.');
+      } else if (error.constraint === 'students_ra_unique') {
+        return new Error('O RA informado já está cadastrado para outro aluno.');
+      }
+    }
     return new Error('Erro ao cadastrar aluno.');
   }
 };
