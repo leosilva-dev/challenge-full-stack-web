@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const toggleDrawerOpen = ref(true)
@@ -20,8 +20,16 @@ const items = [
 
 const navigateTo = (route: string) => {
   router.push(route)
-  toggleDrawerOpen.value = false
 }
+
+const route = router.currentRoute
+
+const pageTitle = computed(() => {
+  if (route.value.meta && route.value.meta.title) {
+    return route.value.meta.title
+  }
+  return 'Módulo acadêmico'
+})
 </script>
 <template>
   <v-card>
@@ -31,7 +39,7 @@ const navigateTo = (route: string) => {
           variant="text"
           @click.stop="toggleDrawerOpen = !toggleDrawerOpen"
         ></v-app-bar-nav-icon>
-        <v-toolbar-title>Módulo acadêmico</v-toolbar-title>
+        <v-toolbar-title>{{ pageTitle }}</v-toolbar-title>
         <v-spacer />
       </v-app-bar>
 
