@@ -8,9 +8,52 @@ export interface IStudent {
   cpf: string
 }
 
-const getAll = async (): Promise<IStudent[] | undefined> => {
+const getAll = async (
+  page: number,
+  pageSize: number,
+  search: string = ''
+): Promise<IStudent[] | undefined> => {
   try {
-    const { data } = await Api.get<IStudent[]>('/alunos')
+    const { data } = await Api.get<IStudent[]>(
+      `/alunos?page=${page}&pageSize=${pageSize}&search=${search}`
+    )
+    return data
+  } catch (error) {
+    return undefined
+  }
+}
+
+const getById = async (id: number): Promise<IStudent | undefined> => {
+  try {
+    const { data } = await Api.get(`/alunos/${id}`)
+    return data.result
+  } catch (error) {
+    return undefined
+  }
+}
+
+const deleteById = async (id: number): Promise<string | undefined> => {
+  try {
+    const { data } = await Api.delete(`/alunos/${id}`)
+    return data.result
+  } catch (error) {
+    return undefined
+  }
+}
+
+const create = async (newStudent: IStudent): Promise<string | undefined> => {
+  try {
+    const { data } = await Api.post('/alunos', newStudent)
+    return data
+  } catch (error) {
+    return undefined
+  }
+}
+
+const update = async (newStudent: IStudent): Promise<string | undefined> => {
+  try {
+    const { id, name, email } = newStudent
+    const { data } = await Api.put(`/alunos/${id}`, { name, email })
     return data
   } catch (error) {
     return undefined
@@ -18,5 +61,9 @@ const getAll = async (): Promise<IStudent[] | undefined> => {
 }
 
 export const StudentsService = {
-  getAll
+  create,
+  update,
+  getAll,
+  getById,
+  deleteById
 }
