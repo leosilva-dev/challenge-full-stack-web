@@ -3,6 +3,7 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { IUpdateParams, IUpdateParamsId } from 'src/controllers/students/updateById';
 import { StudentRepository } from 'src/repositories/StudentRepository';
 import { studentsController } from 'src/controllers/students';
+import { responseBadRequest, sendOkResponse } from 'src/utils/replyResponse';
 
 export const updateById = async (app: FastifyInstance) => {
   app.put('/alunos/:id', async (request: FastifyRequest, reply: FastifyReply) => {
@@ -12,9 +13,9 @@ export const updateById = async (app: FastifyInstance) => {
 
       const repository = new StudentRepository();
       const result = await studentsController.updateById(id, body, repository);
-      reply.send({ result });
+      sendOkResponse(reply, { result });
     } catch (error: any) {
-      reply.status(400).send({ error: error.message });
+      responseBadRequest(reply, error.message);
     }
   });
 };

@@ -2,6 +2,7 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { studentsController } from 'src/controllers/students';
 import { ICreateParams } from 'src/controllers/students/create';
 import { StudentRepository } from 'src/repositories/StudentRepository';
+import { responseBadRequest, sendOkResponse } from 'src/utils/replyResponse';
 
 export const createStudent = async (app: FastifyInstance) => {
   app.post('/alunos', async (request: FastifyRequest, reply: FastifyReply) => {
@@ -9,9 +10,9 @@ export const createStudent = async (app: FastifyInstance) => {
       const params = request.body as ICreateParams;
       const repository = new StudentRepository();
       const result = await studentsController.create(params, repository);
-      reply.send({ result });
+      sendOkResponse(reply, result);
     } catch (error: any) {
-      reply.code(400).send({ error: error.message });
+      responseBadRequest(reply, error.message);
     }
   });
 };

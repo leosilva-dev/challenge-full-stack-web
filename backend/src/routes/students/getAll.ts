@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { studentsController } from 'src/controllers/students';
 import { StudentRepository } from 'src/repositories/StudentRepository';
+import { responseBadRequest, sendOkResponse } from 'src/utils/replyResponse';
 
 export const getAll = async (app: FastifyInstance) => {
   app.get('/alunos', async (request: FastifyRequest, reply: FastifyReply) => {
@@ -12,9 +13,9 @@ export const getAll = async (app: FastifyInstance) => {
 
       const repository = new StudentRepository();
       const result = await studentsController.getAll(repository, page, pageSize, search);
-      reply.send(result);
+      sendOkResponse(reply, result);
     } catch (error: any) {
-      reply.status(400).send({ error: error.message });
+      responseBadRequest(reply, error.message);
     }
   });
 };
