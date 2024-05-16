@@ -1,12 +1,14 @@
 import 'dotenv/config';
 import fastify from 'fastify';
-import { routes } from './routes/routes';
 import cors from '@fastify/cors';
+import { routes } from './routes/routes';
+import { handleNotFound } from './middlewares';
 
 export const app = fastify();
 
-app.register(routes);
 app.register(cors);
+app.register(routes);
+app.register(handleNotFound);
 
 const startServer = async () => {
   try {
