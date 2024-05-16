@@ -4,7 +4,10 @@ import { IStudent } from 'src/database/models';
 
 const getById = async (id: string): Promise<IStudent | undefined | Error> => {
   try {
-    const result = await Knex(ETableNames.students).where({ id }).first();
+    const result = await Knex(ETableNames.students)
+      .where({ id })
+      .select('id', 'name', 'email', 'cpf', 'ra')
+      .first();
     return result;
   } catch (error) {
     return new Error('Erro ao buscar aluno.');
