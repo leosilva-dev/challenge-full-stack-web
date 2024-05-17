@@ -4,11 +4,12 @@
 
 ### Dependências Globais
 
-É necessário possuir o Node.JS, Yarn e o Docker instalados globalmente em sua máquina.
+É necessário possuir as seguintes dependências instalados globalmente em sua máquina.
 
 - Node.JS
 - Yarn
 - Docker (com Docker Compose)
+- knex
 
 ### Dependências Locais
 
@@ -35,6 +36,15 @@ http://localhost:3333/
 
 Para parar todos os serviços, basta pressionar CTRL+C no terminal.
 Você pode configurar o ambiente e outras variáveis de ambiente no arquivo .env.
+
+## Banco de dados
+
+Assim que o banco de dados for inicializado pelo docker compose, é necessário rodar as migrations para que o esquema do banco seja criado.
+Execute o seguinte comando:
+
+```bash
+yarn migrate:latest
+```
 
 ## Testes
 
