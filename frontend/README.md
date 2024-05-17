@@ -1,39 +1,34 @@
-# frontend
+# Instalação e Execução do Projeto Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+## Dependências
 
-## Recommended IDE Setup
+### Dependências Globais
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+É necessário possuir o Node.js e o Yarn instalados globalmente em sua máquina.
 
-## Type Support for `.vue` Imports in TS
+- Node.js
+- Yarn
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+### Dependências Locais
 
-## Customize configuration
+Com o repositório clonado e as dependências globais instaladas, você pode instalar as dependências locais do projeto utilizando o Yarn:
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
+```bash
+yarn install
 ```
 
-### Compile and Hot-Reload for Development
+## Executar o Projeto
 
-```sh
-npm run dev
+Execute o seguinte comando para iniciar o projeto:
+
+```bash
+yarn dev
 ```
 
-### Type-Check, Compile and Minify for Production
+Isso iniciará os serviços necessários, como o banco de dados e o servidor da aplicação, e irá expor a aplicação em:
 
-```sh
-npm run build
-```
+http://localhost:5173/
 
-### Lint with [ESLint](https://eslint.org/)
+### Observações:
 
-```sh
-npm run lint
-```
+Para parar todos os serviços, basta pressionar CTRL+C no terminal.
