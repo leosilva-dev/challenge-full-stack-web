@@ -12,6 +12,12 @@ const createStudent = async (req: FastifyRequest, reply: FastifyReply) => {
   reply.code(201).send(student);
 };
 
+const getAllStudents = async (req: FastifyRequest, reply: FastifyReply) => {
+  const students = await studentService.getAllStudents();
+  reply.code(200).send(students);
+};
+
 export const studentsController = {
   createStudent,
+  getAllStudents,
 };

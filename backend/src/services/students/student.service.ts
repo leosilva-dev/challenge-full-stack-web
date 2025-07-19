@@ -31,4 +31,8 @@ export class StudentService {
 
     return this.repository.createStudent(data);
   }
+
+  async getAllStudents() {
+    return this.repository.getAllStudents();
+  }
 }

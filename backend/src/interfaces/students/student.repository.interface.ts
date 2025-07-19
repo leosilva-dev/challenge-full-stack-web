@@ -1,9 +1,10 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, Student } from "@prisma/client";
 
 export interface IStudentRepository {
-  createStudent(data: Prisma.StudentCreateInput): Promise<any>;
+  createStudent(data: Prisma.StudentCreateInput): Promise<Student>;
   findByField(
     field: "email" | "cpf" | "ra",
     value: string
-  ): Promise<any | null>;
+  ): Promise<Student | null>;
+  getAllStudents(): Promise<Student[]>;
 }
