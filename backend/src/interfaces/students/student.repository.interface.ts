@@ -8,4 +8,8 @@ export interface IStudentRepository {
   ): Promise<IStudentResponseDTO | null>;
   getAllStudents(): Promise<IStudentResponseDTO[]>;
   getStudentById(id: string): Promise<IStudentResponseDTO | null>;
+  updateStudent(
+    id: string,
+    data: Partial<ICreateStudentDTO>
+  ): Promise<IStudentResponseDTO>;
 }

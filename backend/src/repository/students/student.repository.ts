@@ -32,4 +32,14 @@ export class StudentRepository implements IStudentRepository {
   async getStudentById(id: string): Promise<IStudentResponseDTO | null> {
     return prisma.student.findUnique({ where: { id } });
   }
+
+  async updateStudent(
+    id: string,
+    data: Partial<ICreateStudentDTO>
+  ): Promise<IStudentResponseDTO> {
+    return prisma.student.update({
+      where: { id },
+      data,
+    });
+  }
 }

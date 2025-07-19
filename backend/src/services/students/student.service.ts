@@ -43,4 +43,33 @@ export class StudentService {
     }
     return student;
   }
+
+  async updateStudent(id: string, data: Partial<ICreateStudentDTO>) {
+    const student = await this.repository.getStudentById(id);
+    if (!student) {
+      throw new HttpError(404, "Aluno não encontrado.");
+    }
+
+    if (data.cpf !== undefined) {
+      throw new HttpError(400, "O campo CPF não pode ser editado.");
+    }
+    if (data.ra !== undefined) {
+      throw new HttpError(400, "O campo RA não pode ser editado.");
+    }
+
+    if (data.email) {
+      const emailExists = await this.repository.findByField(
+        "email",
+        data.email
+      );
+      if (emailExists && emailExists.id !== id) {
+        throw new HttpError(
+          409,
+          "Já existe um aluno cadastrado com este e-mail."
+        );
+      }
+    }
+
+    return this.repository.updateStudent(id, data);
+  }
 }

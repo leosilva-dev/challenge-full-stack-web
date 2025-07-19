@@ -23,8 +23,16 @@ const getStudentById = async (req: FastifyRequest, reply: FastifyReply) => {
   reply.code(200).send(student);
 };
 
+const updateStudent = async (req: FastifyRequest, reply: FastifyReply) => {
+  const { id } = req.params as { id: string };
+  const bodyParsed = createStudentSchema.partial().parse(req.body);
+  const student = await studentService.updateStudent(id, bodyParsed);
+  reply.code(200).send(student);
+};
+
 export const studentsController = {
   createStudent,
   getAllStudents,
   getStudentById,
+  updateStudent,
 };
