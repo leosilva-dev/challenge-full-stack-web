@@ -1,11 +1,11 @@
-import { Prisma, Student } from "@prisma/client";
+import { ICreateStudentDTO, IStudentResponseDTO } from "../../dtos/student.dto";
 
 export interface IStudentRepository {
-  createStudent(data: Prisma.StudentCreateInput): Promise<Student>;
+  createStudent(data: ICreateStudentDTO): Promise<IStudentResponseDTO>;
   findByField(
     field: "email" | "cpf" | "ra",
     value: string
-  ): Promise<Student | null>;
-  getAllStudents(): Promise<Student[]>;
-  getStudentById(id: string): Promise<Student | null>;
+  ): Promise<IStudentResponseDTO | null>;
+  getAllStudents(): Promise<IStudentResponseDTO[]>;
+  getStudentById(id: string): Promise<IStudentResponseDTO | null>;
 }

@@ -1,11 +1,11 @@
-import { Prisma } from "@prisma/client";
+import { ICreateStudentDTO } from "../../dtos/student.dto";
 import { IStudentRepository } from "../../interfaces/students/student.repository.interface";
 import { HttpError } from "../../helpers/httpError";
 
 export class StudentService {
   constructor(private repository: IStudentRepository) {}
 
-  async createStudent(data: Prisma.StudentCreateInput) {
+  async createStudent(data: ICreateStudentDTO) {
     const duplicates = await Promise.all([
       this.repository.findByField("email", data.email),
       this.repository.findByField("cpf", data.cpf),
