@@ -30,9 +30,16 @@ const updateStudent = async (req: FastifyRequest, reply: FastifyReply) => {
   reply.code(200).send(student);
 };
 
+const deleteStudent = async (req: FastifyRequest, reply: FastifyReply) => {
+  const { id } = req.params as { id: string };
+  await studentService.deleteStudent(id);
+  reply.code(200).send({ message: "Student deleted successfully." });
+};
+
 export const studentsController = {
   createStudent,
   getAllStudents,
   getStudentById,
   updateStudent,
+  deleteStudent,
 };

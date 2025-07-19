@@ -12,4 +12,5 @@ export interface IStudentRepository {
     id: string,
     data: Partial<ICreateStudentDTO>
   ): Promise<IStudentResponseDTO>;
+  deleteStudent(id: string): Promise<void>;
 }

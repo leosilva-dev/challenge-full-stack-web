@@ -42,4 +42,8 @@ export class StudentRepository implements IStudentRepository {
       data,
     });
   }
+
+  deleteStudent(id: string): Promise<void> {
+    return prisma.student.delete({ where: { id } }).then(() => {});
+  }
 }

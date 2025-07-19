@@ -72,4 +72,12 @@ export class StudentService {
 
     return this.repository.updateStudent(id, data);
   }
+
+  async deleteStudent(id: string) {
+    const student = await this.repository.getStudentById(id);
+    if (!student) {
+      throw new HttpError(404, "Aluno não encontrado.");
+    }
+    return this.repository.deleteStudent(id);
+  }
 }
