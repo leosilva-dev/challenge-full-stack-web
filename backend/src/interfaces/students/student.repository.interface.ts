@@ -7,4 +7,5 @@ export interface IStudentRepository {
     value: string
   ): Promise<Student | null>;
   getAllStudents(): Promise<Student[]>;
+  getStudentById(id: string): Promise<Student | null>;
 }

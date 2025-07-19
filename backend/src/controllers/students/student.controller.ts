@@ -17,7 +17,14 @@ const getAllStudents = async (req: FastifyRequest, reply: FastifyReply) => {
   reply.code(200).send(students);
 };
 
+const getStudentById = async (req: FastifyRequest, reply: FastifyReply) => {
+  const { id } = req.params as { id: string };
+  const student = await studentService.getStudentById(id);
+  reply.code(200).send(student);
+};
+
 export const studentsController = {
   createStudent,
   getAllStudents,
+  getStudentById,
 };

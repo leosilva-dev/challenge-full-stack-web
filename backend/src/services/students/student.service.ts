@@ -35,4 +35,12 @@ export class StudentService {
   async getAllStudents() {
     return this.repository.getAllStudents();
   }
+
+  async getStudentById(id: string) {
+    const student = await this.repository.getStudentById(id);
+    if (!student) {
+      throw new HttpError(404, "Aluno não encontrado.");
+    }
+    return student;
+  }
 }

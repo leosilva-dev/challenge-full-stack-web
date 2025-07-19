@@ -26,4 +26,8 @@ export class StudentRepository implements IStudentRepository {
   async getAllStudents(): Promise<Student[]> {
     return prisma.student.findMany();
   }
+
+  async getStudentById(id: string): Promise<Student | null> {
+    return prisma.student.findUnique({ where: { id } });
+  }
 }
