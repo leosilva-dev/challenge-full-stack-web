@@ -1,11 +1,11 @@
 import { FastifyServerOptions } from "fastify";
-import { createServer } from "./server";
+import { createServer, RouteConfig } from "./server";
 import { registerRoutes } from "./routes";
 
 const serverOptions: FastifyServerOptions = { logger: true };
-const serverConfig = { registerRoutes };
+const routesConfig: RouteConfig = { registerRoutes };
 
-const server = createServer(serverOptions, serverConfig);
+const server = createServer(serverOptions, routesConfig);
 
 try {
   server.start();

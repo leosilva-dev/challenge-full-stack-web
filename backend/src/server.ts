@@ -5,13 +5,13 @@ import { errorHandler } from "./middlewares/errorHandler";
 
 dotenv.config();
 
-type ServerConfig = {
-  registerRoutes?: (app: FastifyInstance) => void;
+export type RouteConfig = {
+  registerRoutes: (app: FastifyInstance) => void;
 };
 
 export const createServer = (
-  options: FastifyServerOptions = {},
-  config: ServerConfig = {}
+  options: FastifyServerOptions,
+  routes: RouteConfig
 ) => {
   const app = Fastify(options);
 
@@ -22,9 +22,11 @@ export const createServer = (
     methods: ["GET", "POST", "PUT", "DELETE"],
   });
 
-  if (config.registerRoutes) {
-    config.registerRoutes(app);
-  }
+  app.setNotFoundHandler((_, reply) => {
+    reply.code(404).send({ message: "Route not found" });
+  });
+
+  routes.registerRoutes(app);
 
   const start = () => {
     app.listen({ port: Number(process.env.PORT) || 3333 }, (err, address) => {
