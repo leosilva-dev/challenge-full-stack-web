@@ -1,6 +1,7 @@
 import Fastify, { FastifyInstance, FastifyServerOptions } from "fastify";
 import cors from "@fastify/cors";
 import dotenv from "dotenv";
+import { errorHandler } from "./middlewares/errorHandler";
 
 dotenv.config();
 
@@ -13,6 +14,8 @@ export const createServer = (
   config: ServerConfig = {}
 ) => {
   const app = Fastify(options);
+
+  app.setErrorHandler(errorHandler);
 
   app.register(cors, {
     origin: "*",
