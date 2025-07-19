@@ -1,12 +1,8 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { StudentRepository } from "../../repository/students/student.repository";
-import { StudentService } from "../../services/students/student.service";
-import { createStudentSchema } from "../../validation-schemas/student.schema";
-import {
-  sendOkResponse,
-  sendCreated,
-  sendNotFound,
-} from "../../helpers/httpResponse";
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { StudentRepository } from '../../repository/students/student.repository';
+import { StudentService } from '../../services/students/student.service';
+import { createStudentSchema } from '../../validation-schemas/student.schema';
+import { sendOkResponse, sendCreated, sendNotFound } from '../../helpers/httpResponse';
 
 const studentRepository = new StudentRepository();
 const studentService = new StudentService(studentRepository);
@@ -26,7 +22,7 @@ const getStudentById = async (req: FastifyRequest, reply: FastifyReply) => {
   const { id } = req.params as { id: string };
   const student = await studentService.getStudentById(id);
   if (!student) {
-    return sendNotFound(reply, "Student not found");
+    return sendNotFound(reply, 'Student not found');
   }
   sendOkResponse(reply, student);
 };
@@ -41,7 +37,7 @@ const updateStudent = async (req: FastifyRequest, reply: FastifyReply) => {
 const deleteStudent = async (req: FastifyRequest, reply: FastifyReply) => {
   const { id } = req.params as { id: string };
   await studentService.deleteStudent(id);
-  sendOkResponse(reply, { message: "Student deleted successfully." });
+  sendOkResponse(reply, { message: 'Student deleted successfully.' });
 };
 
 export const studentsController = {

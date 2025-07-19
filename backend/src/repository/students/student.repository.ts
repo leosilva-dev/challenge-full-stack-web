@@ -1,7 +1,7 @@
-import { ICreateStudentDTO, IStudentResponseDTO } from "../../dtos/student.dto";
-import { Prisma, Student } from "@prisma/client";
-import { IStudentRepository } from "../../interfaces/students/student.repository.interface";
-import { prisma } from "../../lib/prisma";
+import { ICreateStudentDTO, IStudentResponseDTO } from '../../dtos/student.dto';
+import { Prisma, Student } from '@prisma/client';
+import { IStudentRepository } from '../../interfaces/students/student.repository.interface';
+import { prisma } from '../../lib/prisma';
 
 export class StudentRepository implements IStudentRepository {
   async createStudent(data: ICreateStudentDTO): Promise<IStudentResponseDTO> {
@@ -10,15 +10,15 @@ export class StudentRepository implements IStudentRepository {
   }
 
   async findByField(
-    field: "email" | "cpf" | "ra",
-    value: string
+    field: 'email' | 'cpf' | 'ra',
+    value: string,
   ): Promise<IStudentResponseDTO | null> {
     switch (field) {
-      case "email":
+      case 'email':
         return prisma.student.findUnique({ where: { email: value } });
-      case "cpf":
+      case 'cpf':
         return prisma.student.findUnique({ where: { cpf: value } });
-      case "ra":
+      case 'ra':
         return prisma.student.findUnique({ where: { ra: value } });
       default:
         throw new Error(`Unsupported field: ${field}`);
@@ -33,10 +33,7 @@ export class StudentRepository implements IStudentRepository {
     return prisma.student.findUnique({ where: { id } });
   }
 
-  async updateStudent(
-    id: string,
-    data: Partial<ICreateStudentDTO>
-  ): Promise<IStudentResponseDTO> {
+  async updateStudent(id: string, data: Partial<ICreateStudentDTO>): Promise<IStudentResponseDTO> {
     return prisma.student.update({
       where: { id },
       data,
