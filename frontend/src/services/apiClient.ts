@@ -17,6 +17,11 @@ export class ApiClient {
       headers['Content-Type'] = 'application/json'
     }
 
+    const token = localStorage.getItem('auth-token')
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+
     const defaultOptions: RequestInit = {
       headers: {
         ...headers,
@@ -29,12 +34,18 @@ export class ApiClient {
     try {
       const response = await fetch(url, config)
 
+      const data: T = await response.json()
+
       if (!response.ok) {
-        const errorData: ApiError = await response.json()
-        throw new Error(errorData.error || `HTTP Error: ${response.status}`)
+        if (typeof data === 'object' && data !== null && 'message' in data && 'success' in data) {
+          throw new Error((data as any).message)
+        }
+        if (typeof data === 'object' && data !== null && 'error' in data) {
+          throw new Error((data as ApiError).error)
+        }
+        throw new Error(`HTTP Error: ${response.status}`)
       }
 
-      const data: T = await response.json()
       return data
     } catch (error) {
       if (error instanceof Error) {

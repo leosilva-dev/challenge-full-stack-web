@@ -2,12 +2,15 @@
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useNotification } from '@/composables/useNotification'
+import { useAuthStore } from '@/stores/auth'
 
 const { notifications, removeNotification, getSnackbarColor, getNotificationIcon } =
   useNotification()
 
+const authStore = useAuthStore()
 const toggleDrawerOpen = ref(true)
 const router = useRouter()
+const showUserMenu = ref(false)
 
 const items = [
   {
@@ -24,6 +27,12 @@ const items = [
 
 const navigateTo = (route: string) => {
   router.push(route)
+}
+
+const handleLogout = async () => {
+  showUserMenu.value = false
+  await authStore.logout()
+  router.push('/login')
 }
 
 const currentRoute = ref(router.currentRoute.value.path)
@@ -49,6 +58,34 @@ watch(
       ></v-app-bar-nav-icon>
       <v-toolbar-title class="text-white">{{ pageTitle }}</v-toolbar-title>
       <v-spacer />
+
+      <v-menu v-model="showUserMenu" offset-y>
+        <template v-slot:activator="{ props }">
+          <v-btn color="white" variant="text" v-bind="props" class="text-white">
+            <v-icon start>mdi-account</v-icon>
+            {{ authStore.userName }}
+            <v-icon end>mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>{{ authStore.user?.email }}</v-list-item-title>
+            <v-list-item-subtitle>
+              {{ authStore.isAdmin ? 'Administrador' : 'Usuário' }}
+            </v-list-item-subtitle>
+          </v-list-item>
+
+          <v-divider />
+
+          <v-list-item @click="handleLogout">
+            <template v-slot:prepend>
+              <v-icon>mdi-logout</v-icon>
+            </template>
+            <v-list-item-title>Sair</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
     <v-navigation-drawer v-model="toggleDrawerOpen" app>
@@ -67,7 +104,7 @@ watch(
     </v-navigation-drawer>
 
     <v-main>
-      <RouterView />
+      <slot />
     </v-main>
 
     <template v-for="notification in notifications" :key="notification.id">
