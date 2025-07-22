@@ -1,7 +1,11 @@
 import { FastifyReply } from 'fastify';
 
 export const sendOkResponse = <T>(reply: FastifyReply, data: T): void => {
-  reply.code(200).send({ data });
+  if (data && typeof data === 'object' && 'data' in data && 'pagination' in data) {
+    reply.code(200).send(data);
+  } else {
+    reply.code(200).send({ data });
+  }
 };
 
 export const sendBadRequest = (reply: FastifyReply, error: string): void => {
