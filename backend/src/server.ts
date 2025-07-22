@@ -35,5 +35,5 @@ export const createServer = (options: FastifyServerOptions, routes: RouteConfig)
     });
   };
 
-  return { start };
+  return { app, start };
 };
