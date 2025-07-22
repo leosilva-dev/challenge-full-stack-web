@@ -1,189 +1,185 @@
 <template>
-  <v-container class="py-8">
-    <v-row>
-      <v-col cols="12">
-        <div class="d-flex justify-space-between align-center mb-6">
-          <h1 class="text-h4 font-weight-bold">Gestão de Alunos</h1>
-          <v-btn
-            color="primary"
-            prepend-icon="mdi-account-plus"
-            @click="openAddDialog"
-            :disabled="loading"
-          >
-            Adicionar Aluno
-          </v-btn>
-        </div>
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="12">
-        <v-card>
-          <v-card-title class="d-flex align-center">
-            <v-text-field
-              v-model="searchQuery"
-              append-inner-icon="mdi-magnify"
-              label="Buscar alunos..."
-              single-line
-              hide-details
-              variant="outlined"
-              density="compact"
-              :disabled="loading"
-              @input="handleSearchInput"
-              clearable
-              @click:clear="handleSearchClear"
-              class="me-4"
-              style="max-width: 400px"
-            ></v-text-field>
-
-            <v-spacer></v-spacer>
-
-            <v-chip
-              v-if="pagination && pagination.total > 0"
-              variant="outlined"
+  <MainLayout>
+    <v-container class="py-8">
+      <v-row>
+        <v-col cols="12">
+          <div class="d-flex justify-space-between align-center mb-6">
+            <h1 class="text-h4 font-weight-bold">Gestão de Alunos</h1>
+            <v-btn
               color="primary"
-              size="small"
+              prepend-icon="mdi-account-plus"
+              @click="openAddDialog"
+              :disabled="loading"
             >
-              {{ pagination.total }} {{ pagination.total === 1 ? 'aluno' : 'alunos' }}
-            </v-chip>
+              Adicionar Aluno
+            </v-btn>
+          </div>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12">
+          <v-card>
+            <v-card-title class="d-flex align-center">
+              <v-text-field
+                v-model="searchQuery"
+                append-inner-icon="mdi-magnify"
+                label="Buscar alunos..."
+                single-line
+                hide-details
+                variant="outlined"
+                density="compact"
+                :disabled="loading"
+                @input="handleSearchInput"
+                clearable
+                @click:clear="handleSearchClear"
+                class="me-4"
+                style="max-width: 400px"
+              ></v-text-field>
+            </v-card-title>
+
+            <v-data-table
+              :headers="headers"
+              :items="students || []"
+              :loading="loading"
+              loading-text="Carregando alunos..."
+              class="elevation-0"
+              no-data-text="Nenhum aluno cadastrado"
+              items-per-page-text="Itens por página:"
+              :items-per-page="pagination?.limit || 10"
+              :page="pagination?.page || 1"
+              :items-length="pagination?.total || 0"
+              @update:page="handlePageChange"
+              @update:items-per-page="handleItemsPerPageChange"
+            >
+              <template v-slot:item.cpf="{ item }">
+                {{ formatCPFDisplay(item.cpf) }}
+              </template>
+
+              <template v-slot:item.createdAt="{ item }">
+                {{ formatDate(item.createdAt) }}
+              </template>
+
+              <template v-slot:item.actions="{ item }">
+                <v-btn
+                  icon="mdi-pencil"
+                  size="small"
+                  color="primary"
+                  variant="text"
+                  @click="openEditDialog(item)"
+                  :disabled="loading"
+                ></v-btn>
+                <v-btn
+                  icon="mdi-delete"
+                  size="small"
+                  color="error"
+                  variant="text"
+                  @click="handleDeleteStudent(item)"
+                  :disabled="loading"
+                  v-if="authStore.isAdmin"
+                ></v-btn>
+              </template>
+            </v-data-table>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <v-dialog v-model="showDialog" max-width="600px" persistent>
+        <v-card>
+          <v-card-title class="text-h5">
+            {{ editingStudent ? 'Editar Aluno' : 'Adicionar Novo Aluno' }}
           </v-card-title>
 
-          <v-data-table
-            :headers="headers"
-            :items="students || []"
-            :loading="loading"
-            loading-text="Carregando alunos..."
-            class="elevation-0"
-            no-data-text="Nenhum aluno cadastrado"
-            items-per-page-text="Itens por página:"
-            :items-per-page="pagination?.limit || 10"
-            :page="pagination?.page || 1"
-            :items-length="pagination?.total || 0"
-            @update:page="handlePageChange"
-            @update:items-per-page="handleItemsPerPageChange"
-          >
-            <template v-slot:item.cpf="{ item }">
-              {{ formatCPFDisplay(item.cpf) }}
-            </template>
-
-            <template v-slot:item.createdAt="{ item }">
-              {{ formatDate(item.createdAt) }}
-            </template>
-
-            <template v-slot:item.actions="{ item }">
-              <v-btn
-                icon="mdi-pencil"
-                size="small"
-                color="primary"
-                variant="text"
-                @click="openEditDialog(item)"
+          <v-card-text>
+            <v-form ref="formRef" v-model="formValid">
+              <v-text-field
+                v-model="form.name"
+                label="Nome completo"
+                :rules="validationRules.name"
+                variant="outlined"
+                class="mb-4"
                 :disabled="loading"
-              ></v-btn>
-              <v-btn
-                icon="mdi-delete"
-                size="small"
-                color="error"
-                variant="text"
-                @click="handleDeleteStudent(item)"
+              ></v-text-field>
+
+              <v-text-field
+                v-model="form.email"
+                label="Email"
+                type="email"
+                :rules="validationRules.email"
+                variant="outlined"
+                class="mb-4"
                 :disabled="loading"
-              ></v-btn>
-            </template>
-          </v-data-table>
+              ></v-text-field>
+
+              <v-text-field
+                v-model="form.cpf"
+                label="CPF"
+                :rules="validationRules.cpf"
+                variant="outlined"
+                class="mb-4"
+                :disabled="loading"
+                @input="formatCPF"
+                maxlength="14"
+              ></v-text-field>
+
+              <v-text-field
+                v-model="form.ra"
+                label="RA (Registro Acadêmico)"
+                :rules="validationRules.ra"
+                variant="outlined"
+                :disabled="loading"
+              ></v-text-field>
+            </v-form>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn variant="text" @click="closeDialog" :disabled="loading"> Cancelar </v-btn>
+            <v-btn
+              color="primary"
+              @click="handleSaveStudent"
+              :disabled="!formValid || loading"
+              :loading="loading"
+            >
+              {{ editingStudent ? 'Salvar' : 'Adicionar' }}
+            </v-btn>
+          </v-card-actions>
         </v-card>
-      </v-col>
-    </v-row>
+      </v-dialog>
 
-    <v-dialog v-model="showDialog" max-width="600px" persistent>
-      <v-card>
-        <v-card-title class="text-h5">
-          {{ editingStudent ? 'Editar Aluno' : 'Adicionar Novo Aluno' }}
-        </v-card-title>
-
-        <v-card-text>
-          <v-form ref="formRef" v-model="formValid">
-            <v-text-field
-              v-model="form.name"
-              label="Nome completo"
-              :rules="validationRules.name"
-              variant="outlined"
-              class="mb-4"
-              :disabled="loading"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="form.email"
-              label="Email"
-              type="email"
-              :rules="validationRules.email"
-              variant="outlined"
-              class="mb-4"
-              :disabled="loading"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="form.cpf"
-              label="CPF"
-              :rules="validationRules.cpf"
-              variant="outlined"
-              class="mb-4"
-              :disabled="loading"
-              @input="formatCPF"
-              maxlength="14"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="form.ra"
-              label="RA (Registro Acadêmico)"
-              :rules="validationRules.ra"
-              variant="outlined"
-              :disabled="loading"
-            ></v-text-field>
-          </v-form>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn variant="text" @click="closeDialog" :disabled="loading"> Cancelar </v-btn>
-          <v-btn
-            color="primary"
-            @click="handleSaveStudent"
-            :disabled="!formValid || loading"
-            :loading="loading"
-          >
-            {{ editingStudent ? 'Salvar' : 'Adicionar' }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="showDeleteDialog" max-width="400px">
-      <v-card>
-        <v-card-title class="text-h5">Confirmar Exclusão</v-card-title>
-        <v-card-text>
-          Deseja realmente excluir o aluno <strong>{{ studentToDelete?.name }}</strong
-          >? <br /><br />
-          Esta ação não pode ser desfeita.
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn variant="text" @click="showDeleteDialog = false" :disabled="loading">
-            Cancelar
-          </v-btn>
-          <v-btn color="error" @click="confirmDelete" :disabled="loading" :loading="loading">
-            Excluir
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-container>
+      <v-dialog v-model="showDeleteDialog" max-width="400px">
+        <v-card>
+          <v-card-title class="text-h5">Confirmar Exclusão</v-card-title>
+          <v-card-text>
+            Deseja realmente excluir o aluno <strong>{{ studentToDelete?.name }}</strong
+            >? <br /><br />
+            Esta ação não pode ser desfeita.
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn variant="text" @click="showDeleteDialog = false" :disabled="loading">
+              Cancelar
+            </v-btn>
+            <v-btn color="error" @click="confirmDelete" :disabled="loading" :loading="loading">
+              Excluir
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-container>
+  </MainLayout>
 </template>
 
 <script setup lang="ts">
+import MainLayout from '@/components/MainLayout.vue'
 import { ref, onMounted } from 'vue'
 import { useStudents, useStudentForm } from '@/composables/useStudents'
 import { useNotification } from '@/composables/useNotification'
+import { useAuthStore } from '@/stores/auth'
 import { formatDate, formatCPFDisplay, handleCPFInput } from '@/utils/formatters'
 import type { Student } from '@/types/student.types'
+
+const authStore = useAuthStore()
 
 const {
   students,
@@ -278,9 +274,10 @@ const handleSaveStudent = async () => {
   const studentName = form.name
   const isEditing = !!editingStudent.value
 
-  const result = isEditing
-    ? await updateStudent(editingStudent.value.id, form)
-    : await createStudent(form)
+  const result =
+    isEditing && editingStudent.value
+      ? await updateStudent(editingStudent.value.id, form)
+      : await createStudent(form)
 
   if (result) {
     const action = isEditing ? 'atualizado' : 'adicionado'
