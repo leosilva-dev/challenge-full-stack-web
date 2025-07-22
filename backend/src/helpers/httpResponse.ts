@@ -23,3 +23,25 @@ export const sendCreated = <T>(reply: FastifyReply, data: T): void => {
 export const sendNoContent = (reply: FastifyReply): void => {
   reply.code(204).send();
 };
+
+export class HttpResponse {
+  static success<T>(
+    reply: FastifyReply,
+    data: T,
+    message?: string,
+    statusCode: number = 200,
+  ): void {
+    reply.code(statusCode).send({
+      success: true,
+      message,
+      data,
+    });
+  }
+
+  static error(reply: FastifyReply, message: string, statusCode: number = 500): void {
+    reply.code(statusCode).send({
+      success: false,
+      message,
+    });
+  }
+}
