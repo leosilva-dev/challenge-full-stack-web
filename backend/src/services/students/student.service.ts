@@ -1,4 +1,4 @@
-import { ICreateStudentDTO } from '../../dtos/student.dto';
+import { ICreateStudentDTO, IGetAllStudentsDTO } from '../../dtos/student.dto';
 import { IStudentRepository } from '../../interfaces/students/student.repository.interface';
 import { HttpError } from '../../helpers/httpError';
 
@@ -29,8 +29,8 @@ export class StudentService {
     return this.repository.createStudent(data);
   }
 
-  async getAllStudents() {
-    return this.repository.getAllStudents();
+  async getAllStudents(params: IGetAllStudentsDTO = {}) {
+    return this.repository.getAllStudents(params);
   }
 
   async getStudentById(id: string) {
@@ -47,10 +47,10 @@ export class StudentService {
       throw new HttpError(404, 'Aluno não encontrado.');
     }
 
-    if (data.cpf !== undefined) {
+    if (data.cpf !== undefined && data.cpf !== student.cpf) {
       throw new HttpError(400, 'O campo CPF não pode ser editado.');
     }
-    if (data.ra !== undefined) {
+    if (data.ra !== undefined && data.ra !== student.ra) {
       throw new HttpError(400, 'O campo RA não pode ser editado.');
     }
 

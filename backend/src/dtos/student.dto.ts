@@ -14,3 +14,19 @@ export interface IStudentResponseDTO {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IGetAllStudentsDTO {
+  page?: number;
+  limit?: number;
+  search?: string;
+}
+
+export interface IPaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}

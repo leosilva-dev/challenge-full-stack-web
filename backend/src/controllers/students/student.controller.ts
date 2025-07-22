@@ -3,6 +3,7 @@ import { StudentRepository } from '../../repository/students/student.repository'
 import { StudentService } from '../../services/students/student.service';
 import { createStudentSchema } from '../../validation-schemas/student.schema';
 import { sendOkResponse, sendCreated, sendNotFound } from '../../helpers/httpResponse';
+import { IGetAllStudentsDTO } from '../../dtos/student.dto';
 
 const studentRepository = new StudentRepository();
 const studentService = new StudentService(studentRepository);
@@ -14,7 +15,13 @@ const createStudent = async (req: FastifyRequest, reply: FastifyReply) => {
 };
 
 const getAllStudents = async (req: FastifyRequest, reply: FastifyReply) => {
-  const students = await studentService.getAllStudents();
+  const query = req.query as IGetAllStudentsDTO;
+  const params = {
+    page: query.page ? parseInt(query.page.toString()) : undefined,
+    limit: query.limit ? parseInt(query.limit.toString()) : undefined,
+    search: query.search || undefined,
+  };
+  const students = await studentService.getAllStudents(params);
   sendOkResponse(reply, students);
 };
 

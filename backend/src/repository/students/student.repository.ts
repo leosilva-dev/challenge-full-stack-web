@@ -1,11 +1,15 @@
-import { ICreateStudentDTO, IStudentResponseDTO } from '../../dtos/student.dto';
+import {
+  ICreateStudentDTO,
+  IGetAllStudentsDTO,
+  IPaginatedResponse,
+  IStudentResponseDTO,
+} from '../../dtos/student.dto';
 import { Prisma, Student } from '@prisma/client';
 import { IStudentRepository } from '../../interfaces/students/student.repository.interface';
 import { prisma } from '../../lib/prisma';
 
 export class StudentRepository implements IStudentRepository {
   async createStudent(data: ICreateStudentDTO): Promise<IStudentResponseDTO> {
-    // Converte DTO para o formato do Prisma se necessário
     return prisma.student.create({ data });
   }
 
@@ -25,8 +29,61 @@ export class StudentRepository implements IStudentRepository {
     }
   }
 
-  async getAllStudents(): Promise<IStudentResponseDTO[]> {
-    return prisma.student.findMany();
+  async getAllStudents(params: IGetAllStudentsDTO): Promise<IPaginatedResponse<Student>> {
+    const page = params.page || 1;
+    const limit = params.limit || 10;
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.StudentWhereInput = {};
+
+    if (params.search) {
+      where.OR = [
+        {
+          name: {
+            contains: params.search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          email: {
+            contains: params.search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          cpf: {
+            contains: params.search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          ra: {
+            contains: params.search,
+            mode: 'insensitive',
+          },
+        },
+      ];
+    }
+
+    const [students, total] = await Promise.all([
+      prisma.student.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.student.count({ where }),
+    ]);
+
+    return {
+      data: students,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async getStudentById(id: string): Promise<IStudentResponseDTO | null> {
