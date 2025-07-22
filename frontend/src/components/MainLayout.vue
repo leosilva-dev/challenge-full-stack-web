@@ -3,7 +3,7 @@ import LayoutBase from './LayoutBase.vue'
 </script>
 
 <template>
-  <div>
-    <LayoutBase />
-  </div>
+  <LayoutBase>
+    <slot />
+  </LayoutBase>
 </template>
